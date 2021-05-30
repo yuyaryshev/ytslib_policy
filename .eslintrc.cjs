@@ -39,6 +39,7 @@ module.exports = {
         //         "FunctionExpression": false
         //     }
         // }],
+        "sonarjs/no-redundant-jump": 1,
         "sonarjs/cognitive-complexity": 0,
     },
 };
