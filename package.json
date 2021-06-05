@@ -1,0 +1,25 @@
+{
+  "name": "ytslib_policy",
+  "version": "1.0.0",
+  "description": "Policy for typescript libraries",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuyaryshev/ytslib_policy.git"
+  },
+  "keywords": [
+    "yproject_policy"
+  ],
+  "author": "Yuri Yaryshev",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/yuyaryshev/ytslib_policy/issues"
+  },
+  "homepage": "https://github.com/yuyaryshev/ytslib_policy#readme",
+  "devDependencies": {
+    "prettier": "^2.3.0"
+  }
+}
