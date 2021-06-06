@@ -31,6 +31,7 @@ specifiers:
   '@types/micromatch': ^4.0.1
   '@types/node': ^15.12.1
   '@types/react': ^17.0.9
+  '@types/sinon': ^10.0.2
   '@typescript-eslint/eslint-plugin': ^4.26.0
   '@typescript-eslint/parser': ^4.26.0
   babel-loader: ^8.2.2
@@ -88,6 +89,7 @@ devDependencies:
   '@types/micromatch': 4.0.1
   '@types/node': 15.12.1
   '@types/react': 17.0.9
+  '@types/sinon': 10.0.2
   '@typescript-eslint/eslint-plugin': 4.26.0_20402444dce539b9a5aa61b9d15feae1
   '@typescript-eslint/parser': 4.26.0_eslint@7.28.0+typescript@4.3.2
   babel-loader: 8.2.2_@babel+core@7.14.3
@@ -3449,6 +3451,12 @@ packages:
     dependencies:
       '@types/mime': 1.3.2
       '@types/node': 15.12.1
+    dev: true
+
+  /@types/sinon/10.0.2:
+    resolution: {integrity: sha512-BHn8Bpkapj8Wdfxvh2jWIUoaYB/9/XhsL0oOvBfRagJtKlSl9NWPcFOz2lRukI9szwGxFtYZCTejJSqsGDbdmw==}
+    dependencies:
+      '@sinonjs/fake-timers': 7.1.2
     dev: true
 
   /@types/source-list-map/0.1.2:

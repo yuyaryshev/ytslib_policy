@@ -77,6 +77,7 @@ const policyPackageJsonFunc = ({
     "rollup": "^2.50.4",
 }:{}),
         "sinon": "^11.1.1",
+        "@types/sinon": "^10.0.2",
         "@types/jest": "^26.0.23",
         "@typescript-eslint/eslint-plugin": "^4.25.0",
         "@typescript-eslint/parser": "^4.25.0",
