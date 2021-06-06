@@ -1,5 +1,11 @@
 // prettier-ignore
-const policyPackageJsonFunc = ({packageName, private, react})=>({
+const policyPackageJsonFunc = ({
+                                   packageName,
+                                   private,
+                                   react,
+                                   testModuleImports,
+                                   useRollup
+})=>({
     "main": "lib/cjs/index.js",
     "module": "lib/esm/index.js",
     "type":undefined,
@@ -14,10 +20,10 @@ const policyPackageJsonFunc = ({packageName, private, react})=>({
         "precompile": "inprint && ycplmon2 fix src && eslint src --fix --quiet",
         "precompile_full": "npm run precompile && prettier src --write",
         "clean:cjs": "yb clean_cjs",
-        "build:cjs": "npm run clean:cjs && babel src --config-file ./babel.cjs.config.cjs --out-dir lib/cjs --extensions \".ts,.tsx,.js,.jsx\" --source-maps && node cjs_require.test.cjs && echo cjs require is ok!",
+        "build:cjs": `npm run clean:cjs && babel src --config-file ./babel.cjs.config.cjs --out-dir lib/cjs --extensions \".ts,.tsx,.js,.jsx\" --source-maps ${testModuleImports?`&& node cjs_require.test.cjs && echo cjs require is ok!`:""}`,
         "watch:cjs": "npm run clean:cjs && babel src --config-file ./babel.cjs.config.cjs --out-dir lib/cjs --extensions \".ts,.tsx,.js,.jsx\" --source-maps -w",
         "clean:esm": "yb clean_esm",
-        "build:esm": "npm run clean:esm && babel src --config-file ./babel.esm.config.cjs --out-dir lib/esm --extensions \".ts,.tsx,.js,.jsx\" --source-maps && node mjs_import.test.mjs && echo mjs import is ok!",
+        "build:esm": `npm run clean:esm && babel src --config-file ./babel.esm.config.cjs --out-dir lib/esm --extensions \".ts,.tsx,.js,.jsx\" --source-maps ${testModuleImports?`&& node mjs_import.test.mjs && echo mjs import is ok!`:""}`,
         "watch:esm": "npm run clean:esm && babel src --config-file ./babel.esm.config.cjs --out-dir lib/esm --extensions \".ts,.tsx,.js,.jsx\" --source-maps -w",
         "clean:types": "yb clean_types",
         "build:types": "npm run clean:types && tsc -p tsconfig-declarations.json",
@@ -28,10 +34,12 @@ const policyPackageJsonFunc = ({packageName, private, react})=>({
         "clean:ts": "yb clean_ts",
         "build:ts": "npm run clean:ts && tsc",
         "build": "npm run precompile_full && npm run clean:all && npm run build:esm && npm run build:cjs && npm run build:types && npm run build:docs && npm run lint && npm run test",
-        "test_module": "node cjs_require.test.cjs && node mjs_import.test.mjs && echo ok",
-        "test": "npm run test_module && jest",
-        "storybook": "start-storybook -p 6006",
-        "build-storybook": "build-storybook",
+        ...(testModuleImports?{"test_module": "node cjs_require.test.cjs && node mjs_import.test.mjs && echo ok",}:{}),
+        "test": `${testModuleImports?`npm run test_module && `:""}jest`,
+        ...(react?{
+            "storybook": "start-storybook -p 6006",
+            "build-storybook": "build-storybook",
+        }:{}),
         "tsc": "npm run build:ts",
         "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
         "republish": "npm run build && npx version-select && npx genversion --es6 --semi version.js && npm publish",
@@ -62,21 +70,13 @@ const policyPackageJsonFunc = ({packageName, private, react})=>({
         "@babel/plugin-transform-typescript": "^7.14.4",
         "@microsoft/api-documenter": "^7.13.12",
         "@microsoft/api-extractor": "^7.15.2",
-        "@rollup/plugin-commonjs": "^19.0.0",
-        "@rollup/plugin-node-resolve": "^13.0.0",
-        "@rollup/plugin-typescript": "^8.2.1",
-        "@storybook/addon-actions": "^6.2.9",
-        "@storybook/addon-essentials": "^6.2.9",
-        "@storybook/addon-links": "^6.2.9",
-        "@types/chai": "^4.2.18",
-        "@types/dir-glob": "^2.0.0",
-        "@types/express": "^4.17.12",
-        "@types/fs-extra": "^9.0.11",
-        "@types/inquirer": "^7.3.1",
+...(useRollup?{
+    "@rollup/plugin-commonjs": "^19.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.0",
+    "@rollup/plugin-typescript": "^8.2.1",
+    "rollup": "^2.50.4",
+}:{}),
         "@types/jest": "^26.0.23",
-        "@types/luxon": "^1.26.5",
-        "@types/micromatch": "^4.0.1",
-        "@types/node": "^15.6.1",
         "@typescript-eslint/eslint-plugin": "^4.25.0",
         "@typescript-eslint/parser": "^4.25.0",
         "babel-loader": "^8.2.2",
@@ -95,13 +95,15 @@ const policyPackageJsonFunc = ({packageName, private, react})=>({
         "json5": "^2.2.0",
         "prettier": "^2.3.0",
         "pretty-quick": "^3.1.0",
-        "rollup": "^2.50.4",
         "ts-jest": "^27.0.1",
         "tslib": "^2.2.0",
         "typescript": "^4.3.2",
         "cross-env": "^7.0.3",
         ...(react?{
             "@storybook/react": "^6.2.9",
+            "@storybook/addon-actions": "^6.2.9",
+            "@storybook/addon-essentials": "^6.2.9",
+            "@storybook/addon-links": "^6.2.9",
             "@testing-library/react": "^11.2.6",
             "@types/react": "^17.0.2",
             // "react": "^17.0.2",
@@ -138,7 +140,7 @@ function enforceObject(j, prop, policyPackageJson, policyOptions) {
         if (!j[prop]) j[prop] = {};
         for (const k in policyPackageJson[prop]) j[prop][k] = policyPackageJson[prop][k];
         for (const k in j[prop])
-            if (!policyPackageJson[prop][k] && !ignored?.[prop]?.includes?.(k) && !policyOptions?.packageJson?.ignored?.[prop]?.includes?.(k))
+            if (!policyPackageJson[prop][k] && !ignored?.[prop]?.includes?.(k) && !policyOptions?.packageJson?.ignored?.[prop]?.includes?.(k) && !prop.startsWith("@types/"))
                 delete j[prop][k];
     } else {
         j[prop] = policyPackageJson[prop];
@@ -180,12 +182,14 @@ module.exports = {
     generate: (packageJson, policyOptions, prevContent) => {
         try {
             let policyPackageJson = require("./package.json");
+            const { testModuleImports } = policyOptions;
 
             const j = JSON.parse(prevContent);
             const genPackageJson = policyPackageJsonFunc({
                 private: j.name.includes("@yuyaryshev/"),
                 packageName: j.name.split("@yuyaryshev/").join(""),
                 react: !!JSON.stringify([j.dependencies, j.peerDependencies]).includes("react"),
+                testModuleImports,
             });
 
             // Copy package versions from original package.json
