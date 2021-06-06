@@ -33,9 +33,9 @@ const policyPackageJsonFunc = ({
         "clean:all": "rm -rf dist/* && yb clean_all && npm run clear:docs",
         "clean:ts": "yb clean_ts",
         "build:ts": "npm run clean:ts && tsc",
-        "build": "npm run precompile_full && npm run clean:all && npm run build:esm && npm run build:cjs && npm run build:types && npm run build:docs && npm run lint && npm run test",
+        "build": "npm run precompile_full && npm run clean:all && npm run build:esm && npm run build:cjs && npm run build:types && npm run lint && npm run test && npm run build:docs",
         ...(testModuleImports?{"test_module": "node cjs_require.test.cjs && node mjs_import.test.mjs && echo ok",}:{}),
-        "test": `${testModuleImports?`npm run test_module && `:""}jest`,
+        "test": `${testModuleImports?`npm run test_module && `:""}${false?`npm run build:cjs && `:""}jest --passWithNoTests`,
         ...(react?{
             "storybook": "start-storybook -p 6006",
             "build-storybook": "build-storybook",
@@ -76,6 +76,7 @@ const policyPackageJsonFunc = ({
     "@rollup/plugin-typescript": "^8.2.1",
     "rollup": "^2.50.4",
 }:{}),
+        "sinon": "^11.1.1",
         "@types/jest": "^26.0.23",
         "@typescript-eslint/eslint-plugin": "^4.25.0",
         "@typescript-eslint/parser": "^4.25.0",
@@ -92,10 +93,11 @@ const policyPackageJsonFunc = ({
         "inprint": "^1.2.10",
         "javascript-stringify": "^2.1.0",
         "jest": "^27.0.3",
+        "ts-jest": "^27.0.1",
+        "jest-ts-webcompat-resolver": "^1.0.0",
         "json5": "^2.2.0",
         "prettier": "^2.3.0",
         "pretty-quick": "^3.1.0",
-        "ts-jest": "^27.0.1",
         "tslib": "^2.2.0",
         "typescript": "^4.3.2",
         "cross-env": "^7.0.3",
@@ -112,8 +114,10 @@ const policyPackageJsonFunc = ({
         }:{})
     },
     "jest": {
-        "rootDir": "lib/cjs",
-        "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$"
+        "rootDir": "src",
+        "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+        "preset": "ts-jest",
+        "resolver": "jest-ts-webcompat-resolver"
     },
     // "jest_DISABLES": {
     //     "transform": {
