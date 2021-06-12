@@ -22,6 +22,7 @@ const policyPackageJsonFunc = ({
         "clean:cjs": "yb clean_cjs",
         "build:cjs": `npm run clean:cjs && babel src --config-file ./babel.cjs.config.cjs --out-dir lib/cjs --extensions \".ts,.tsx,.js,.jsx\" --source-maps ${testModuleImports?`&& node cjs_require.test.cjs && echo cjs require is ok!`:""}`,
         "watch:cjs": "npm run clean:cjs && babel src --config-file ./babel.cjs.config.cjs --out-dir lib/cjs --extensions \".ts,.tsx,.js,.jsx\" --source-maps -w",
+        "watch:test:cjs": `${testModuleImports?`npm run test_module && `:""}${true?`npm run build:cjs && `:""}jest --config=jest.config-cjs.cjs --passWithNoTests -w`,
         "clean:esm": "yb clean_esm",
         "build:esm": `npm run clean:esm && babel src --config-file ./babel.esm.config.cjs --out-dir lib/esm --extensions \".ts,.tsx,.js,.jsx\" --source-maps ${testModuleImports?`&& node mjs_import.test.mjs && echo mjs import is ok!`:""}`,
         "watch:esm": "npm run clean:esm && babel src --config-file ./babel.esm.config.cjs --out-dir lib/esm --extensions \".ts,.tsx,.js,.jsx\" --source-maps -w",
@@ -35,7 +36,9 @@ const policyPackageJsonFunc = ({
         "build:ts": "npm run clean:ts && tsc",
         "build": "npm run precompile_full && npm run clean && npm run build:esm && npm run build:cjs && npm run build:types && npm run lint && npm run test && npm run build:docs",
         ...(testModuleImports?{"test_module": "node cjs_require.test.cjs && node mjs_import.test.mjs && echo ok",}:{}),
-        "test": `${testModuleImports?`npm run test_module && `:""}${false?`npm run build:cjs && `:""}jest --passWithNoTests`,
+        "test:cjs": `${testModuleImports?`npm run test_module && `:""}${true?`npm run build:cjs && `:""}jest --config=jest.config-cjs.cjs --passWithNoTests`,
+        "test:ts": `${testModuleImports?`npm run test_module && `:""}jest --config=jest.config-ts.cjs --passWithNoTests`,
+        "test": `${testModuleImports?`npm run test_module && `:""}jest --config=jest.config-ts.cjs --passWithNoTests`,
         ...(react?{
             "storybook": "start-storybook -p 6006",
             "build-storybook": "build-storybook",
@@ -114,22 +117,6 @@ const policyPackageJsonFunc = ({
             // "react-is": "^17.0.2"
         }:{})
     },
-    "jest": {
-        "rootDir": "src",
-        "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
-        "preset": "ts-jest",
-        "resolver": "jest-ts-webcompat-resolver"
-    },
-    // "jest_DISABLES": {
-    //     "transform": {
-    //         ".(ts|tsx)": "ts-jest"
-    //     },
-    //     "moduleFileExtensions": [
-    //         "ts",
-    //         "tsx",
-    //         "js"
-    //     ]
-    // },
 });
 
 const ignored = {
