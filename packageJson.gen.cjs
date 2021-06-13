@@ -17,6 +17,7 @@ const policyPackageJsonFunc = ({
     },
     "typings": "lib/types/index.d.ts",
     "scripts": {
+        "start": "node lib/cjs/start.js",
         "precompile": "inprint && ycplmon2 fix src && eslint src --fix --quiet",
         "precompile_full": "npm run precompile && prettier src --write",
         "clean:cjs": "yb clean_cjs",
@@ -171,7 +172,7 @@ function reorderPackageJson(j) {
 
 module.exports = {
     filename: "package.json",
-    generate: (packageJson, policyOptions, prevContent) => {
+    generate: (packageJson_UNUSED, policyOptions, prevContent) => {
         try {
             let policyPackageJson = require("./package.json");
             const { testModuleImports } = policyOptions;
