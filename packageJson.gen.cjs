@@ -106,6 +106,7 @@ const policyPackageJsonFunc = ({
         "tslib": "^2.2.0",
         "typescript": "^4.3.2",
         "cross-env": "^7.0.3",
+        "modify-filepath": "*",
         ...(react?{
             "@storybook/react": "^6.2.9",
             "@storybook/addon-actions": "^6.2.9",
