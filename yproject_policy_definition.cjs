@@ -90,7 +90,7 @@ module.exports.create = async function create(configFileName) {
         "src/hello.ts",
         `
 export function hello() {
-    const m = "ytslib_policy package 'modify-filepath' started successfully!";
+    const m = "ytslib_policy package '${name}' started successfully!";
     console.log(m);
     return m;
 }
@@ -105,7 +105,7 @@ import { hello } from "./hello.js";
 
 describe(\`example.test.ts\`, () => {
     it(\`example.test.ts\`, () => {
-        expect(hello()).toEqual("ytslib_policy package 'modify-filepath' started successfully!");
+        expect(hello()).toEqual("ytslib_policy package '${name}' started successfully!");
     });
 });
 
@@ -141,7 +141,7 @@ async function finalRuns() {
 
     const { stdout: pnpmi_stdout } = await shelljs.exec("pnpm i");
     function check_pnpmi_stdout() {
-        if (!pnpmi_stdout.trim().endsWith("done")) {
+        if (!pnpmi_stdout.trim().includes(", done")) {
             console.error(`    STEP pnpm i - didn't output 'done' - something is wrong with pnpm. Is pnpm installed?`);
             return 0;
         }
@@ -172,7 +172,7 @@ async function finalRuns() {
 
     const { stdout: test_cjs_stdout } = await shelljs.exec("npm run test:cjs");
     function check_test_cjs_stdout() {
-        if (!test_cjs_stdout.trim().includes(`ytslib_policy package 'modify-filepath' started successfully!`)) {
+        if (!test_cjs_stdout.trim().includes(`ytslib_policy package '${name}' started successfully!`)) {
             console.error(`    STEP npm run test - something is wrong with the tests. Rerun 'npm run test' and review the errors`);
             // outputFileSync("test_cjs_stdout.log", test_cjs_stdout, "utf-8");
             return 0;
@@ -184,7 +184,7 @@ async function finalRuns() {
 
     const { stdout: test_ts_stdout } = await shelljs.exec("npm run test:ts");
     function check_test_ts_stdout() {
-        if (!test_ts_stdout.trim().includes(`ytslib_policy package 'modify-filepath' started successfully!`)) {
+        if (!test_ts_stdout.trim().includes(`ytslib_policy package '${name}' started successfully!`)) {
             console.error(`    STEP npm run test - something is wrong with the tests. Rerun 'npm run test' and review the errors`);
             // outputFileSync("test_ts_stdout.log", test_ts_stdout, "utf-8");
             return 0;
@@ -196,7 +196,7 @@ async function finalRuns() {
 
     const { stdout: start_stdout } = await shelljs.exec("npm run start");
     function check_start_stdout() {
-        if (!start_stdout.trim().includes(`ytslib_policy package 'modify-filepath' started successfully!`)) {
+        if (!start_stdout.trim().includes(`ytslib_policy package '${name}' started successfully!`)) {
             console.error(`    STEP npm run start - didn't output correctly`);
             // outputFileSync("start_stdout.log", start_stdout, "utf-8");
             return 0;
