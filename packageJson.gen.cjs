@@ -11,14 +11,15 @@ const policyPackageJsonFunc = ({
     "type":undefined,
     "exports": {
         ".": {
-            "import": "./lib/mjs/index.js",
+            "import": "./lib/esm/index.js",
             "require": "./lib/cjs/index.js"
         }
     },
     "typings": "lib/types/index.d.ts",
     "scripts": {
         "start": "node lib/cjs/start.js",
-        "precompile": "inprint && ycplmon2 fix src && eslint src --fix --quiet",
+        "precompile": "yb precompile && eslint src --fix --quiet",
+//        "precompile": "yb precompileinprint && ycplmon2 fix src && eslint src --fix --quiet",
         "precompile_full": "npm run precompile && prettier src --write",
         "clean:cjs": "yb clean_cjs",
         "build:cjs": `npm run clean:cjs && babel src --config-file ./babel.cjs.config.cjs --out-dir lib/cjs --extensions \".ts,.tsx,.js,.jsx\" --source-maps ${testModuleImports?`&& node cjs_require.test.cjs && echo cjs require is ok!`:""}`,
@@ -62,6 +63,7 @@ const policyPackageJsonFunc = ({
         "registry": (!private? "http://registry.npmjs.org" : "http://yyadev.com:4873/")
     },
     "devDependencies": {
+        "yyabuilder": "1.1.1",
         "@babel/cli": "7.14.3",
         "@babel/core": "7.14.3",
         "@babel/node": "^7.14.2",
@@ -95,7 +97,6 @@ const policyPackageJsonFunc = ({
         "eslint-plugin-jsdoc": "^35.0.0",
         "eslint-plugin-sonarjs": "^0.7.0",
         "eslint-plugin-tsdoc": "^0.2.14",
-        "inprint": "^1.2.10",
         "javascript-stringify": "^2.1.0",
         "jest": "^27.0.3",                          // JEST - reports coverage, but no "Click to see the difference" in IDE and doesn't navigate to source, ok with CI
         "ts-jest": "^27.0.1",
@@ -137,7 +138,12 @@ function enforceObject(j, prop, policyPackageJson, policyOptions) {
         if (!j[prop]) j[prop] = {};
         for (const k in policyPackageJson[prop]) j[prop][k] = policyPackageJson[prop][k];
         for (const k in j[prop])
-            if (!policyPackageJson[prop][k] && !ignored?.[prop]?.includes?.(k) && !policyOptions?.packageJson?.ignored?.[prop]?.includes?.(k) && !prop.startsWith("@types/"))
+            if (
+                !policyPackageJson[prop][k] &&
+                !ignored?.[prop]?.includes?.(k) &&
+                !policyOptions?.packageJson?.ignored?.[prop]?.includes?.(k) &&
+                !prop.startsWith("@types/")
+            )
                 delete j[prop][k];
     } else {
         j[prop] = policyPackageJson[prop];
