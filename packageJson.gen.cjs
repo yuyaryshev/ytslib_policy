@@ -3,6 +3,7 @@ const policyPackageJsonFunc = ({
                                    packageName,
                                    private,
                                    react,
+                                   frontend,
                                    testModuleImports,
                                    useRollup
 })=>({
@@ -42,9 +43,17 @@ const policyPackageJsonFunc = ({
         "test:ts": `${testModuleImports?`npm run test_module && `:""}jest --config=jest.config-ts.cjs --passWithNoTests`,
         "test": `${testModuleImports?`npm run test_module && `:""}jest --config=jest.config-ts.cjs --passWithNoTests`,
         ...(react?{
-            "storybook": "start-storybook -p 6006",
-            "build-storybook": "build-storybook",
+            "clean:frontend": "yb clean_frontend",
+            "build:frontend": "npm run clean:frontend",
+            "watch:frontend": "npm run clean:frontend",
         }:{}),
+        ...(frontend?{
+            "clean:frontend": "echo no front-end",
+            "build:frontend": "echo no front-end",
+            "watch:frontend": "echo no front-end",
+        }:{
+
+        }),
         "tsc": "npm run build:ts",
         "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
         "republish": "npm run build && npx version-select && yb genprojmeta && npm publish",
@@ -187,11 +196,14 @@ module.exports = {
             let policyPackageJson = require("./package.json");
             const { testModuleImports } = policyOptions;
 
+            const react = !!JSON.stringify([j.dependencies, j.peerDependencies]).includes("react");
+            const frontend = react;
             const j = JSON.parse(prevContent);
             const genPackageJson = policyPackageJsonFunc({
                 private: j.name.includes("@yuyaryshev/"),
                 packageName: j.name.split("@yuyaryshev/").join(""),
-                react: !!JSON.stringify([j.dependencies, j.peerDependencies]).includes("react"),
+                react,
+                frontend,
                 testModuleImports,
             });
 
