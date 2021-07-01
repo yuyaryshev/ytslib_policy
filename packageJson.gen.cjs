@@ -43,16 +43,18 @@ const policyPackageJsonFunc = ({
         "test:ts": `${testModuleImports?`npm run test_module && `:""}jest --config=jest.config-ts.cjs --passWithNoTests`,
         "test": `${testModuleImports?`npm run test_module && `:""}jest --config=jest.config-ts.cjs --passWithNoTests`,
         ...(react?{
-            "clean:frontend": "yb clean_frontend",
-            "build:frontend": "npm run clean:frontend",
-            "watch:frontend": "npm run clean:frontend",
+            "storybook": "start-storybook -p 6006",
+            "build-storybook": "build-storybook",
         }:{}),
         ...(frontend?{
+            "clean:frontend": "yb clean_frontend",
+            "build:frontend": "npm run precompile && npm run clean:frontend && webpack-cli --mode production --config webpack.frontend.config.js",
+            "watch:frontend": "npm run precompile && npm run clean:frontend && webpack-cli --mode development --config webpack.frontend.config.js -w",
+            "dev_server:frontend": "npm run precompile && webpack-cli serve --mode development --config webpack.frontend.config.js",
+        }:{
             "clean:frontend": "echo no front-end",
             "build:frontend": "echo no front-end",
             "watch:frontend": "echo no front-end",
-        }:{
-
         }),
         "tsc": "npm run build:ts",
         "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
@@ -130,6 +132,11 @@ const policyPackageJsonFunc = ({
             // "react": "^17.0.2",
             // "react-dom": "^17.0.2",
             // "react-is": "^17.0.2"
+        }:{}),
+        ...(frontend?{
+            "webpack": "^5.41.1",
+            "webpack-cli": "^4.6.0",
+            "webpack-node-externals": "2.5.2",
         }:{})
     },
 });
@@ -196,9 +203,9 @@ module.exports = {
             let policyPackageJson = require("./package.json");
             const { testModuleImports } = policyOptions;
 
+            const j = JSON.parse(prevContent);
             const react = !!JSON.stringify([j.dependencies, j.peerDependencies]).includes("react");
             const frontend = react;
-            const j = JSON.parse(prevContent);
             const genPackageJson = policyPackageJsonFunc({
                 private: j.name.includes("@yuyaryshev/"),
                 packageName: j.name.split("@yuyaryshev/").join(""),
