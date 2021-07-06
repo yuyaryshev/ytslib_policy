@@ -48,9 +48,9 @@ const policyPackageJsonFunc = ({
         }:{}),
         ...(frontend?{
             "clean:frontend": "yb clean_frontend",
-            "build:frontend": "npm run precompile && npm run clean:frontend && webpack-cli --mode production --config webpack.frontend.config.js",
-            "watch:frontend": "npm run precompile && npm run clean:frontend && webpack-cli --mode development --config webpack.frontend.config.js -w",
-            "dev_server:frontend": "npm run precompile && webpack-cli serve --mode development --config webpack.frontend.config.js",
+            "build:frontend": "npm run precompile && npm run clean:frontend && webpack-cli --mode production --config webpack.frontend.config.cjs",
+            "watch:frontend": "npm run precompile && npm run clean:frontend && webpack-cli --mode development --config webpack.frontend.config.cjs -w",
+            "dev_server": "npm run precompile && webpack-cli serve --mode development --config webpack.frontend.config.cjs",
         }:{
             "clean:frontend": "echo no front-end",
             "build:frontend": "echo no front-end",
@@ -134,6 +134,11 @@ const policyPackageJsonFunc = ({
             // "react-is": "^17.0.2"
         }:{}),
         ...(frontend?{
+            "react-refresh-typescript": "^2.0.1",
+            "ts-loader": "^9.2.3",
+            "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
+            "webpack-dev-server": "^3.11.2",
+            "react-refresh": "^0.10.0",
             "webpack": "^5.41.1",
             "webpack-cli": "^4.6.0",
             "webpack-node-externals": "2.5.2",
