@@ -102,10 +102,11 @@ export function hello() {
         "src/example.test.ts",
         `
 import { hello } from "./hello.js";
+import { expect } from "chai";
 
 describe(\`example.test.ts\`, () => {
     it(\`example.test.ts\`, () => {
-        expect(hello()).toEqual("ytslib_policy package '${name}' started successfully!");
+        expect(hello()).to.deep.equal("ytslib_policy package '${name}' started successfully!");
     });
 });
 
