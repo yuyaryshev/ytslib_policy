@@ -1,7 +1,7 @@
 {
     "name": "ytslib_policy",
     "description": "Policy for my typescript libraries and applications. Use yproject_policy to apply it.",
-    "version": "0.3.2",
+    "version": "0.4.0",
     "main": "index.js",
     "scripts": {
         "republish": "npx version-select && npm publish && npm i -g ytslib_policy"
@@ -35,6 +35,7 @@
         "@babel/plugin-transform-typescript": "^7.14.6",
         "@microsoft/api-documenter": "^7.13.28",
         "@microsoft/api-extractor": "^7.17.1",
+        "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
         "@storybook/addon-actions": "^6.3.2",
         "@storybook/addon-essentials": "^6.3.2",
         "@storybook/addon-links": "^6.3.2",
@@ -74,20 +75,20 @@
         "modify-filepath": "^1.1.0",
         "prettier": "^2.3.2",
         "pretty-quick": "^3.1.1",
+        "react-refresh": "^0.10.0",
+        "react-refresh-typescript": "^2.0.1",
         "shx": "^0.3.3",
         "sinon": "^11.1.1",
+        "source-map-support": "^0.5.19",
         "ts-jest": "^27.0.3",
+        "ts-loader": "^9.2.3",
         "tslib": "^2.3.0",
         "typescript": "^4.3.5",
-        "yyabuilder": "^1.1.4",
         "webpack": "^5.42.1",
         "webpack-cli": "^4.7.2",
-        "webpack-node-externals": "3.0.0",
-        "react-refresh-typescript": "^2.0.1",
-        "ts-loader": "^9.2.3",
-        "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
         "webpack-dev-server": "^3.11.2",
-        "react-refresh": "^0.10.0"
+        "webpack-node-externals": "3.0.0",
+        "yyabuilder": "^1.1.4"
     },
     "dependencies": {
         "execa": "^5.1.1",
