@@ -26,12 +26,12 @@ BREAKER.log();
 
 /*
 Идеи:
-TODO Делать вот так:
+TO DO Делать вот так:
 import {BREAKER_Lib} from "../../breaker_lib";
 const BREAKER = BREAKER_Lib(__filename);
 
 Это позволит внутри BREAKER'а делать функции, которые смотрят на файл
-TODO при этом нужно сохранить глобальность самого BREAKER'а
+TO DO при этом нужно сохранить глобальность самого BREAKER'а
 
 */
 const fs = require('fs');
