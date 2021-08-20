@@ -1,6 +1,17 @@
 /* USAGES CHEATSHEET
 
 // ================================================
+// Break after some point
+
+// When this point passed then breaker is enabled:
+// @ts-ignore
+BREAKER.enable();
+
+// The is where breakpoint will be fired
+// @ts-ignore
+BREAKER.enabled();
+
+// ================================================
 // Break on same value
 
 // @ts-ignore
@@ -66,7 +77,7 @@ let breaker_map = {
             save: function BREAKER_save(v) {
                 if (pthis.prevValue === undefined) {
                     pthis.enable();
-                    pthis.prevValue = newValue;
+                    pthis.prevValue = v;
                     pthis.prevStack = getTrace();
                 }
             },
