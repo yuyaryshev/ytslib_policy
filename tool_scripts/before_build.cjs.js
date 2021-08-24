@@ -1,0 +1,1 @@
+require("./copy_gitignore_contents.cjs").copy_gitignore_contents();
