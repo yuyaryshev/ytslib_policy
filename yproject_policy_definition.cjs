@@ -5,6 +5,7 @@ const packageJsonGen = require("./packageJson.gen.cjs");
 
 module.exports.policy = "ytslib_policy";
 module.exports.options = {
+    addSubdirs: [[".idea", "runConfigurations"]],
     exclude: [
         "cjs_require.test.cjs",
         "mjs_import.test.mjs",
@@ -28,8 +29,9 @@ module.exports.options = {
         "settings.cjs",
         "example.cjs",
         "temp.cjs",
-		"cpl.json",
+        "cpl.json",
     ], // exclude specified folders and files from projects
+
     // policy options here
 };
 module.exports.create = async function create(configFileName) {
