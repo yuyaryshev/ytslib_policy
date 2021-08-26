@@ -204,6 +204,65 @@ function reorderPackageJson(j) {
     return j2;
 }
 
+
+const yuyaryshevPackagesList = [
+    "app_ide",
+    "code_deduplicator",
+    "dwh_ymon",
+    "inprint",
+    "int_id_manager_for_better_sqlite3",
+    "modify-filepath",
+    "odb",
+    "persistent_containers",
+    "react_lib_example",
+    "semaphore_for_kids",
+    "server_store",
+    "ssh_js",
+    "ssh_js_lite",
+    "yatasks",
+    "yatasks_one_api",
+    "ycmd",
+    "ycommon_dev_tools",
+    "ycomponents",
+    "ycplmon",
+    "ydb",
+    "ydb_better_sqlite",
+    "ydb_migrator",
+    "ydb_postgres",
+    "ydb_sqlite",
+    "ydomain_compiler",
+    "ydomain_runtime_client",
+    "ydomain_runtime_common",
+    "ydomain_runtime_server",
+    "yelasticsearch",
+    "yinstr",
+    "ymessagepack",
+    "yobservable",
+    "yobsidian_tasks",
+    "yone_api",
+    "yparser_generator",
+    "ypg_runtime",
+    "yproject_policy",
+    "yquery_core",
+    "yserializer",
+    "ystd",
+    "ystd_client",
+    "ystd_server",
+    "ystorage_types",
+    "ytransport_auth_common",
+    "ytransport_callback",
+    "ytransport_client",
+    "ytransport_client_with_auth",
+    "ytransport_common",
+    "ytransport_observable",
+    "ytransport_server",
+    "ytransport_server_with_auth",
+    "yvirtual_diff",
+]
+function yuyaryshevPackage(p) {
+    return p.startsWith("@yuyaryshev/") || yuyaryshevPackagesList.includes(p);
+}
+
 module.exports = {
     filename: "package.json",
     generate: (packageJson_UNUSED, policyOptions, prevContent) => {
@@ -240,6 +299,20 @@ module.exports = {
             }
 
             for (const prop of enforcedProps) enforceObject(j, prop, genPackageJson, policyOptions);
+
+            if (j.dependencies)
+                for (const k in j.dependencies) {
+                    if (yuyaryshevPackage(k) && j.dependencies[k] !== "*") {
+                        j.dependencies[k] = "*";
+                    }
+                }
+
+            if (j.devDependencies)
+                for (const k in j.devDependencies) {
+                    if (yuyaryshevPackage(k) && j.devDependencies[k] !== "*") {
+                        j.devDependencies[k] = "*";
+                    }
+                }
 
             const reorderedPolicyPackageJson = reorderPackageJson(j);
             const newContent = JSON.stringify(reorderedPolicyPackageJson, undefined, "    ");
