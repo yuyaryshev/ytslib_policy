@@ -87,6 +87,7 @@ const policyPackageJsonFunc = ({
         "@babel/plugin-proposal-optional-chaining": "7.14.2",
         "@babel/plugin-transform-modules-commonjs": "^7.14.0",
         "@babel/plugin-transform-typescript": "^7.14.4",
+        "@babel/preset-typescript": "^7.15.0",
         "@microsoft/api-documenter": "^7.13.12",
         "@microsoft/api-extractor": "^7.15.2",
 ...(useRollup?{
