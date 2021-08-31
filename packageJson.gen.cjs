@@ -146,6 +146,7 @@ const policyPackageJsonFunc = ({
             "webpack": "^5.41.1",
             "webpack-cli": "^4.6.0",
             "webpack-node-externals": "2.5.2",
+			"html-webpack-plugin": "5.3.2",
 			"clean-webpack-plugin": "4.0.0-alpha.0"
         }:{})
     },

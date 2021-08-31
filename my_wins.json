@@ -6,8 +6,8 @@
       "cmd": "cls && npm run precompile && npm run watch:cjs",
       "no_run": false
     },
-    "watch_frontend": {
-      "cmd": "cls && npm run precompile && npm run watch:frontend",
+    "dev_server": {
+      "cmd": "cls && npm run precompile && npm run dev_server",
       "no_run": false
     },
     "precompile": {
