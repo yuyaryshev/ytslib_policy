@@ -1,5 +1,5 @@
 const path = require("path");
-const fs = require("fs");
+const fs = require("fs-extra");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
@@ -66,7 +66,7 @@ module.exports = {
     //     child_process: "empty",
     // },
     mode: "development",
-    entry: [path.resolve(pathes.proj, "src/client/indexSmall.tsx")],
+    entry: [path.resolve(pathes.proj, "src/client/index.tsx")],
     devtool: "inline-source-map",
     devServer: {
         contentBase: "./resources",
@@ -181,7 +181,7 @@ module.exports = {
                 resource.context.startsWith(path.resolve(__dirname)) &&
                 !resource.context.toLowerCase().includes("node_modules")
             ) {
-                resource.request = resource.request.substr(0, resource.request.length - 3) + ".ts";
+                resource.request = resource.request.substr(0, resource.request.length - 3);// Should not add ".ts"! it can be ".tsx"! So leave it empty and let webpack find out the real one!
                 // console.log(`CODE00000000 YYA1134`, { resource, request: resource.request });
             }
         }),

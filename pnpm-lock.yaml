@@ -38,6 +38,7 @@ specifiers:
   babel-plugin-module-resolver: ^4.1.0
   babel-watch: ^7.4.1
   chai: ^4.3.4
+  clean-webpack-plugin: ^4.0.0-alpha.0
   cross-env: ^7.0.3
   eslint: ^7.30.0
   eslint-config-prettier: ^8.3.0
@@ -115,6 +116,7 @@ devDependencies:
   babel-plugin-module-resolver: 4.1.0
   babel-watch: 7.5.0_@babel+core@7.14.6
   chai: 4.3.4
+  clean-webpack-plugin: 4.0.0-alpha.0_webpack@5.47.1
   cross-env: 7.0.3
   eslint: 7.31.0
   eslint-config-prettier: 8.3.0_eslint@7.31.0
@@ -5558,6 +5560,16 @@ packages:
   /clean-stack/2.2.0:
     resolution: {integrity: sha512-4diC9HaTE+KRAMWhDhrGOECgWZxoevMc5TlkObMqNSsVU62PYzXZ/SMTjzyGAFF1YusgxGcSWTEXBhp0CPwQ1A==}
     engines: {node: '>=6'}
+    dev: true
+
+  /clean-webpack-plugin/4.0.0-alpha.0_webpack@5.47.1:
+    resolution: {integrity: sha512-+X6mASBbGSVyw8L9/1rhQ+vS4uaQMopf194kX7Aes8qfezgCFL+qv5W0nwP3a0Tud5kUckARk8tFcoyOSKEjhg==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      webpack: '>=4.0.0 <6.0.0'
+    dependencies:
+      del: 4.1.1
+      webpack: 5.47.1_webpack-cli@4.7.2
     dev: true
 
   /cli-boxes/2.2.1:
