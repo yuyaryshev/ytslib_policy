@@ -5,7 +5,10 @@ const packageJsonGen = require("./packageJson.gen.cjs");
 
 module.exports.policy = "ytslib_policy";
 module.exports.options = {
-    addSubdirs: [[".idea", "runConfigurations"]],
+    addSubdirs: [[".idea", "runConfigurations"]],	
+	allowedExtraFiles:[
+		".idea/runConfigurations/*.*"
+	],
     exclude: [
         "cjs_require.test.cjs",
         "mjs_import.test.mjs",
