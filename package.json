@@ -1,7 +1,7 @@
 {
     "name": "ytslib_policy",
     "description": "Policy for my typescript libraries and applications. Use yproject_policy to apply it.",
-    "version": "0.6.4",
+    "version": "0.6.5",
     "main": "index.js",
     "scripts": {
         "republish": "node ./tool_scripts/before_build.cjs && npx version-select && npm publish && npm i -g ytslib_policy"
@@ -92,6 +92,7 @@
         "webpack-dev-server": "^4.0.0",
         "webpack-node-externals": "3.0.0",
         "worker-plugin": "^5.0.1",
+        "@types/react-test-renderer": "^17.0.1",
         "yyabuilder": "^1.1.11"
     },
     "dependencies": {

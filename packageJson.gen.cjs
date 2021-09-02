@@ -98,7 +98,6 @@ const policyPackageJsonFunc = ({
 }:{}),
         "sinon": "^11.1.1",
         "@types/sinon": "^10.0.2",
-        "@types/jest": "^26.0.23",
         "@typescript-eslint/eslint-plugin": "^4.25.0",
         "@typescript-eslint/parser": "^4.25.0",
         "babel-loader": "^8.2.2",
@@ -133,6 +132,7 @@ const policyPackageJsonFunc = ({
             "@storybook/addon-links": "^6.2.9",
             "@testing-library/react": "^11.2.6",
             "@types/react": "^17.0.2",
+			"@types/react-test-renderer": "^17.0.1",
             // "react": "^17.0.2",
             // "react-dom": "^17.0.2",
             // "react-is": "^17.0.2"
