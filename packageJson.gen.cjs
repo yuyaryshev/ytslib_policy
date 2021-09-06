@@ -115,6 +115,7 @@ const policyPackageJsonFunc = ({
         "ts-jest": "^27.0.1",
         "jest-ts-webcompat-resolver": "^1.0.0",
         "@types/chai": "^4.2.18",
+        "@types/mocha": "*",
         "chai": "^4.3.4",                           // Chai - Used with mocha
         "mocha": "^9.0.0",                          // The opposite to jest: fails with coverage, navigates to .ts files, supports "Click to see the difference", fails with some CI
         "json5": "^2.2.0",
