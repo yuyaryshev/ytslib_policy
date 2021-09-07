@@ -209,7 +209,6 @@ function reorderPackageJson(j) {
     return j2;
 }
 
-
 const yuyaryshevPackagesList = [
     "app_ide",
     "code_deduplicator",
@@ -263,7 +262,7 @@ const yuyaryshevPackagesList = [
     "ytransport_server",
     "ytransport_server_with_auth",
     "yvirtual_diff",
-]
+];
 function yuyaryshevPackage(p) {
     return p.startsWith("@yuyaryshev/") || yuyaryshevPackagesList.includes(p);
 }
@@ -303,7 +302,9 @@ module.exports = {
                     );
             }
 
-            for (const prop of enforcedProps) enforceObject(j, prop, genPackageJson, policyOptions);
+            for (const prop of enforcedProps) {
+                enforceObject(j, prop, genPackageJson, policyOptions);
+            }
 
             if (j.dependencies)
                 for (const k in j.dependencies) {
