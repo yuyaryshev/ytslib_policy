@@ -110,6 +110,7 @@ const policyPackageJsonFunc = ({
         "eslint-plugin-jsdoc": "^35.0.0",
         "eslint-plugin-sonarjs": "^0.7.0",
         "eslint-plugin-tsdoc": "^0.2.14",
+        "eslint-plugin-react-hooks": "*",
         "javascript-stringify": "^2.1.0",
         "jest": "^27.0.3",                          // JEST - reports coverage, but no "Click to see the difference" in IDE and doesn't navigate to source, ok with CI
         "ts-jest": "^27.0.1",
