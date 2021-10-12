@@ -77,7 +77,7 @@ const policyPackageJsonFunc = ({
     },
     "license": (!private? "Unlicense" : "Private"),
     "publishConfig": {
-        "registry": (!private? "http://registry.npmjs.org" : "http://yyadev.com:4873/")
+        "registry": (!private? "https://registry.npmjs.org" : "http://yyadev.com:4873/")
     },
     "devDependencies": {
         "yyabuilder": "1.1.1",
