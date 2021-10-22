@@ -121,6 +121,20 @@ describe(\`example.test.ts\`, () => {
     );
 
     outputFileSync(
+        "src/empty.test.ts",
+        `
+import { expect } from "chai";
+
+describe(\`empty.test.ts\`, () => {
+    it(\`empty.test.ts\`, () => {
+        expect(1).to.deep.equal(1);
+    });
+});
+    `.trim(),
+        "utf-8",
+    );
+	
+    outputFileSync(
         "src/start.ts",
         `
 import { hello } from "./hello.js";
