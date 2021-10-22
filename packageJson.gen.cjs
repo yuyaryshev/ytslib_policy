@@ -63,7 +63,7 @@ const policyPackageJsonFunc = ({
         }),
         "tsc": "npm run build:ts",
         "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
-        "republish": "npm run build && npx version-select && yb genprojmeta && npm publish",
+        "republish": "npm run build && npx version-select && yb genprojmeta && yb dir_hash && npm publish && yb commit-tag-push",
         "republish_forced": "npm run build_lite && npx version-select && yb genprojmeta && npm publish",
         "deps": "echo Finding loops in .js requires... & del deps.png & madge dist -c -i deps.png && deps.png",
         "deps_all": "echo Generating full .js requires tree... & del deps.png & madge dist -i deps.png && deps.png",
