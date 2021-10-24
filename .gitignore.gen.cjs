@@ -3,12 +3,6 @@ module.exports = {
     filename: ".gitignore",
     generate: (packageJson_UNUSED, policyOptions, prevContent) => {
         return `
-src/tests/generated
-src/tests/generated
-cpl.json
-src/generator/tests/generated
-
-
 # Logs
 logs
 *.log
