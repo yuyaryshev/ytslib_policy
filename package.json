@@ -1,7 +1,7 @@
 {
     "name": "ytslib_policy",
     "description": "Policy for my typescript libraries and applications. Use yproject_policy to apply it.",
-    "version": "0.6.14",
+    "version": "0.7.1",
     "main": "index.js",
     "scripts": {
         "republish": "node ./tool_scripts/before_build.cjs && npx version-select && npm publish && npm i -g ytslib_policy"

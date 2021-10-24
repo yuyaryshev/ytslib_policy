@@ -1,8 +1,11 @@
+const DIVIDER_DEV_DEB = "yyabuilder"; // devDependency used to split policy and non-policy dev dependencies
+
 // prettier-ignore
 const policyPackageJsonFunc = ({
                                    packageName,
                                    private,
                                    react,
+                                   isApp,
                                    frontend,
                                    testModuleImports,
                                    useRollup
@@ -16,6 +19,7 @@ const policyPackageJsonFunc = ({
             "require": "./lib/cjs/index.js"
         }
     },
+    "isApp": !!isApp,
     "typings": "lib/types/index.d.ts",
     "scripts": {
         "start": "node lib/cjs/start.js",
@@ -47,10 +51,6 @@ const policyPackageJsonFunc = ({
         "test:cjs": `${testModuleImports?`npm run test_module && `:""}${true?`npm run build:cjs && `:""}jest --config=jest.config-cjs.cjs --passWithNoTests --runInBand`,
         "test:ts": `${testModuleImports?`npm run test_module && `:""}jest --config=jest.config-ts.cjs --passWithNoTests --runInBand`,
         "test": `${testModuleImports?`npm run test_module && `:""} npm run test:cjs_mocha`,
-        ...(react?{
-            "storybook": "start-storybook -p 6006",
-            "build-storybook": "build-storybook",
-        }:{}),
         ...(frontend?{
             "clean:frontend": "yb clean_frontend",
             "build:frontend": "npm run precompile && npm run clean:frontend && webpack-cli --mode production --config webpack.frontend.config.cjs",
@@ -68,6 +68,7 @@ const policyPackageJsonFunc = ({
         "deps": "echo Finding loops in .js requires... & del deps.png & madge dist -c -i deps.png && deps.png",
         "deps_all": "echo Generating full .js requires tree... & del deps.png & madge dist -i deps.png && deps.png",
         "deps_orphans": "echo Finding orphans .js requires... & del deps.png & madge dist --orphans -i deps.png && deps.png",
+        "nodemon:backend": "nodemon -w ./lib/cjs/server ./lib/cjs/server/start.js"
     },
     "author": "Yuri Yaryshev",
     "homepage": (!private? `https://github.com/yuyaryshev/${packageName}`: `http://git.yyadev.com/yuyaryshev/${packageName}.git`),
@@ -132,17 +133,10 @@ const policyPackageJsonFunc = ({
         "cross-env": "^7.0.3",
         "modify-filepath": "*",
         "source-map-support": "^0.5.19",
-        ...(react?{
-            "@storybook/react": "^6.2.9",
-            "@storybook/addon-actions": "^6.2.9",
-            "@storybook/addon-essentials": "^6.2.9",
-            "@storybook/addon-links": "^6.2.9",
+        ...(react && !isApp?{
             "@testing-library/react": "^11.2.6",
             "@types/react": "^17.0.2",
 			"@types/react-test-renderer": "^17.0.1",
-            // "react": "^17.0.2",
-            // "react-dom": "^17.0.2",
-            // "react-is": "^17.0.2"
         }:{}),
         ...(frontend?{
             "react-refresh-typescript": "^2.0.1",
@@ -190,6 +184,7 @@ const enforcedProps = [
     "version",
     "keywords",
     "description",
+    "isApp",
     "author",
     "type",
     "main",
@@ -275,6 +270,8 @@ module.exports = {
     filename: "package.json",
     generate: (packageJson_UNUSED, policyOptions, prevContent) => {
         try {
+            const excludePackageJsonKeys = new Set(policyOptions?.excludePackageJsonKeys || []);
+
             let policyPackageJson = require("./package.json");
             const { testModuleImports } = policyOptions;
 
@@ -287,42 +284,82 @@ module.exports = {
                 react,
                 frontend,
                 testModuleImports,
+                isApp: j.isApp || false,
             });
 
-            // Copy package versions from original package.json
-            for (const k in genPackageJson.devDependencies)
-                genPackageJson.devDependencies[k] = policyPackageJson.devDependencies[k] || genPackageJson.devDependencies[k];
+            if (excludePackageJsonKeys.has("devDependencies")) {
+                genPackageJson.devDependencies = { ...(j.devDependencies || {}) };
+            } else {
+                const policyDevDeps = {};
+                let foundDivider = false;
+                const nonPolicyDevDeps = {};
+                for (const k in j.devDependencies) {
+                    if (!foundDivider) {
+                        policyDevDeps[k] = j.devDependencies[k];
+                    } else {
+                        nonPolicyDevDeps[k] = j.devDependencies[k];
+                    }
+                    foundDivider = foundDivider || k === DIVIDER_DEV_DEB;
+                }
 
-            // Write to original package.json missing packages
-            {
-                let additionToPolicy = {};
+                // Copy package versions from policies package.json
                 for (const k in genPackageJson.devDependencies)
-                    if (!policyPackageJson.devDependencies[k]) additionToPolicy[k] = genPackageJson.devDependencies[k];
-                if (Object.keys(additionToPolicy).length)
-                    console.warn(
-                        `CODE00000000 Not all packages are added to policies package.json. Without it old versions from .gen file will be used. Add them:\n`,
-                        JSON.stringify(additionToPolicy, undefined, "    "),
-                        "\n",
-                    );
+                    genPackageJson.devDependencies[k] = policyPackageJson.devDependencies[k] || genPackageJson.devDependencies[k];
+
+                if (genPackageJson.devDependencies[DIVIDER_DEV_DEB]) {
+                    delete genPackageJson.devDependencies[DIVIDER_DEV_DEB];
+                }
+                genPackageJson.devDependencies[DIVIDER_DEV_DEB] = policyPackageJson.devDependencies[DIVIDER_DEV_DEB];
+
+                // Copy non-policy devDependencies
+                for (const k in nonPolicyDevDeps) {
+                    if (!genPackageJson.devDependencies[k]) {
+                        genPackageJson.devDependencies[k] = nonPolicyDevDeps[k];
+                    }
+                }
+
+                // Write to original package.json missing packages
+                {
+                    let additionToPolicy = {};
+                    for (const k in genPackageJson.devDependencies)
+                        if (!policyPackageJson.devDependencies[k]) {
+                            if (nonPolicyDevDeps[k]) {
+                                continue;
+                            }
+                            additionToPolicy[k] = genPackageJson.devDependencies[k];
+                        }
+                    if (Object.keys(additionToPolicy).length)
+                        console.warn(
+                            `CODE00000000 Not all packages are added to policies package.json. Without it old versions from .gen file will be used. Add them:\n`,
+                            JSON.stringify(additionToPolicy, undefined, "    "),
+                            "\n",
+                        );
+                }
             }
 
             for (const prop of enforcedProps) {
-                enforceObject(j, prop, genPackageJson, policyOptions);
+                if (!excludePackageJsonKeys.has(prop)) {
+                    enforceObject(j, prop, genPackageJson, policyOptions);
+                }
             }
 
-            if (j.dependencies)
-                for (const k in j.dependencies) {
-                    if (yuyaryshevPackage(k) && j.dependencies[k] !== "*") {
-                        j.dependencies[k] = "*";
+            if (!excludePackageJsonKeys.has("dependencies")) {
+                if (j.dependencies)
+                    for (const k in j.dependencies) {
+                        if (yuyaryshevPackage(k) && j.dependencies[k] !== "*") {
+                            j.dependencies[k] = "*";
+                        }
                     }
-                }
+            }
 
-            if (j.devDependencies)
-                for (const k in j.devDependencies) {
-                    if (yuyaryshevPackage(k) && j.devDependencies[k] !== "*") {
-                        j.devDependencies[k] = "*";
+            if (!excludePackageJsonKeys.has("devDependencies")) {
+                if (j.devDependencies)
+                    for (const k in j.devDependencies) {
+                        if (yuyaryshevPackage(k) && j.devDependencies[k] !== "*") {
+                            j.devDependencies[k] = "*";
+                        }
                     }
-                }
+            }
 
             const reorderedPolicyPackageJson = reorderPackageJson(j);
             const newContent = JSON.stringify(reorderedPolicyPackageJson, undefined, "    ");
