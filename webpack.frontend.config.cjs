@@ -7,7 +7,8 @@ const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 const isDevelopment = process.env.NODE_ENV !== "production";
 const ReactRefreshTypeScript = require("react-refresh-typescript");
-const WorkerPlugin = require('worker-plugin');
+const WorkerPlugin = require("worker-plugin");
+const NODE_ENV = "development";
 
 const pathes = (() => {
     const proj = path.resolve(__dirname);
@@ -24,24 +25,41 @@ const pathes = (() => {
     };
 })();
 
-for (let k in pathes) console.log(`pathes.${k} = ${pathes[k]}`);
-
-const NODE_ENV = "development";
+function keepOnlyExistingPaths(obj) {
+	const r = {};
+	for(const k in obj) {
+		const p = obj[k];
+		if(fs.existsSync(p)) {
+			r[k] = p;
+		}
+	}
+	return r;	
+}
 
 let BUILD_DATE = new Date();
 BUILD_DATE.setTime(BUILD_DATE.getTime() + 3 * 60 * 60 * 1000);
 BUILD_DATE = JSON.stringify(BUILD_DATE);
 BUILD_DATE = BUILD_DATE.substr(1, 10) + " " + BUILD_DATE.substr(12, 8);
 
-console.log("");
-console.log("BUILD_DATE = " + BUILD_DATE);
-console.log("");
+//for (let k in pathes) {
+//    console.log(`pathes.${k} = ${pathes[k]}`);
+//}
+//console.log("");
+//console.log("BUILD_DATE = " + BUILD_DATE);
+//console.log("");
 
 let package_json;
 let manifest_json;
 
 package_json = JSON.parse(fs.readFileSync(path.resolve(pathes.root, "package.json"), { encoding: "utf-8" }));
-manifest_json = JSON.parse(fs.readFileSync(path.resolve(pathes.resources, "manifest.json"), { encoding: "utf-8" }));
+try{
+	manifest_json = JSON.parse(fs.readFileSync(path.resolve(pathes.resources, "manifest.json"), { encoding: "utf-8" }));
+} catch(e) {
+	if(e.code !== "ENOENT") {
+		throw e;
+	}
+}
+
 let tsconf = eval("(()=>(" + fs.readFileSync("tsconfig.json", "utf-8") + "))()");
 
 let moduleAliases = {};
@@ -54,11 +72,11 @@ let excludedModules = ["fs", "sql-prettier", "prettier", "express", "socket.io",
 
 let webpack_dev_proxy;
 try {
-	webpack_dev_proxy = require('./webpack_dev_proxy.cjs')?.webpack_dev_proxy;
-} catch(e) {
-	if(e && e.code !== "ENOENT") {
-		console.error(e);
-	}
+    webpack_dev_proxy = require("./webpack_dev_proxy.cjs")?.webpack_dev_proxy;
+} catch (e) {
+    if (e && e.code !== "ENOENT") {
+        console.error(e);
+    }
 }
 
 module.exports = {
@@ -87,6 +105,7 @@ module.exports = {
             util: false,
             assert: false,
             stream: false,
+            events: false,
             //            crypto: require.resolve("crypto-browserify"),
             //            fs:null,
         },
@@ -149,7 +168,7 @@ module.exports = {
                                         alias: moduleAliases,
                                     },
                                 ],
-                                ...(enableHotReloadInDevServerMode? ["react-refresh/babel"]:[]),
+                                ...(enableHotReloadInDevServerMode ? ["react-refresh/babel"] : []),
                                 // "@babel/transform-modules-commonjs",
                             ],
                         },
@@ -201,9 +220,15 @@ module.exports = {
         }),
         new CleanWebpackPlugin(),
         //        new webpack.NamedModulesPlugin(), // REMOVED ON 2020-13-11
-        new HtmlWebpackPlugin({ title: manifest_json.name }),
-//        ...(enableHotReloadInDevServerMode && isDevelopment && [new webpack.HotModuleReplacementPlugin()]|| []),
-        ...(enableHotReloadInDevServerMode && isDevelopment && [new ReactRefreshWebpackPlugin()]||[]),
+        new HtmlWebpackPlugin({
+            title: manifest_json?.name || package_json.name || undefined,
+			...keepOnlyExistingPaths({
+				template: "./resources/index.html",
+				favicon: "./resources/favicon.png",
+			})
+        }),
+        //        ...(enableHotReloadInDevServerMode && isDevelopment && [new webpack.HotModuleReplacementPlugin()]|| []),
+        ...((enableHotReloadInDevServerMode && isDevelopment && [new ReactRefreshWebpackPlugin()]) || []),
     ],
     //	watchOptions : {
     //		aggregateTimeout : 300

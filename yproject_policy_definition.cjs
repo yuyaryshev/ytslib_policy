@@ -5,10 +5,9 @@ const packageJsonGen = require("./packageJson.gen.cjs");
 
 module.exports.policy = "ytslib_policy";
 module.exports.options = {
-    addSubdirs: [[".idea", "runConfigurations"]],	
-	allowedExtraFiles:[
-		".idea/runConfigurations/*.*"
-	],
+    addSubdirs: [[".idea", "runConfigurations"]],
+    allowedExtraFiles: [".idea/runConfigurations/*.*"],
+    allowDifferent: ["my_wins.json"],
     exclude: [
         "cjs_require.test.cjs",
         "mjs_import.test.mjs",
@@ -33,6 +32,8 @@ module.exports.options = {
         "example.cjs",
         "temp.cjs",
         "cpl.json",
+        "published.json",
+        "webpack_dev_proxy.cjs"
     ], // exclude specified folders and files from projects
 
     // policy options here
@@ -116,6 +117,20 @@ describe(\`example.test.ts\`, () => {
     });
 });
 
+    `.trim(),
+        "utf-8",
+    );
+
+    outputFileSync(
+        "src/empty.test.ts",
+        `
+import { expect } from "chai";
+
+describe(\`empty.test.ts\`, () => {
+    it(\`empty.test.ts\`, () => {
+        expect(1).to.deep.equal(1);
+    });
+});
     `.trim(),
         "utf-8",
     );
