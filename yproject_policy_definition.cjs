@@ -33,7 +33,7 @@ module.exports.options = {
         "temp.cjs",
         "cpl.json",
         "published.json",
-        "webpack_dev_proxy.cjs"
+        "webpack_dev_proxy.cjs",
     ], // exclude specified folders and files from projects
 
     // policy options here
@@ -60,25 +60,36 @@ module.exports.create = async function create(configFileName) {
 
     const description = readmeMd.split("#")[1].split("\n").slice(1).join("\n").trim();
     const gitRepoBaseUrl = gitRepo.substr(0, gitRepo.length - 4);
-    const name = gitRepoBaseUrl.split("/").slice(-1)[0];
+    let packageName = gitRepoBaseUrl.split("/").slice(-1)[0];
+    let private = true;
+
+    if (gitRepoBaseUrl.includes(".yyadev.")) {
+        packageName = "@yuyaryshev/" + packageName;
+    } else {
+        private = false;
+    }
+    console.log(`Package name: ${packageName}`);
+    console.log(`Package repo: ${gitRepo}`);
 
     // console.log(`CODE00000003`);
-    // console.log(`CODE00000004`, {gitRepo, name, description, gitRepoBaseUrl});
+    // console.log(`CODE00000004`, {gitRepo, packageName, description, gitRepoBaseUrl});
     // console.log(`CODE00000005`);
 
     const packageJsonContent0 = {
-        name,
+        name:packageName,
         version: "0.0.1",
         description,
         repository: {
             type: "git",
             url: `git+${gitRepo}`,
         },
-        keywords: name.split("-"),
+        keywords: packageName.split("@yuyaryshev/").join("").split("-"),
         bugs: {
             url: `${gitRepoBaseUrl}/issues`,
         },
         homepage: `${gitRepoBaseUrl}#readme`,
+        license: private ? "ISC" : "TheUnlicense",
+        private,
     };
     const packageJsonContent = packageJsonGen.generate({}, {}, JSON.stringify(packageJsonContent0));
 
@@ -97,7 +108,7 @@ module.exports.create = async function create(configFileName) {
         "src/hello.ts",
         `
 export function hello() {
-    const m = "ytslib_policy package '${name}' started successfully!";
+    const m = "ytslib_policy package '${packageName}' started successfully!";
     console.log(m);
     return m;
 }
@@ -113,7 +124,7 @@ import { expect } from "chai";
 
 describe(\`example.test.ts\`, () => {
     it(\`example.test.ts\`, () => {
-        expect(hello()).to.deep.equal("ytslib_policy package '${name}' started successfully!");
+        expect(hello()).to.deep.equal("ytslib_policy package '${packageName}' started successfully!");
     });
 });
 
@@ -144,10 +155,10 @@ hello();
         "utf-8",
     );
 
-    await finalRuns();
+    await finalRuns(packageName);
 };
 
-async function finalRuns() {
+async function finalRuns(packageName) {
     let passedRuns = 0;
 
     const { stdout: yproject_policy_stdout } = await shelljs.exec("yproject_policy");
@@ -194,7 +205,7 @@ async function finalRuns() {
 
     const { stdout: test_cjs_stdout } = await shelljs.exec("npm run test:cjs");
     function check_test_cjs_stdout() {
-        if (!test_cjs_stdout.trim().includes(`ytslib_policy package '${name}' started successfully!`)) {
+        if (!test_cjs_stdout.trim().includes(`ytslib_policy package '${packageName}' started successfully!`)) {
             console.error(`    STEP npm run test - something is wrong with the tests. Rerun 'npm run test' and review the errors`);
             // outputFileSync("test_cjs_stdout.log", test_cjs_stdout, "utf-8");
             return 0;
@@ -206,7 +217,7 @@ async function finalRuns() {
 
     const { stdout: test_ts_stdout } = await shelljs.exec("npm run test:ts");
     function check_test_ts_stdout() {
-        if (!test_ts_stdout.trim().includes(`ytslib_policy package '${name}' started successfully!`)) {
+        if (!test_ts_stdout.trim().includes(`ytslib_policy package '${packageName}' started successfully!`)) {
             console.error(`    STEP npm run test - something is wrong with the tests. Rerun 'npm run test' and review the errors`);
             // outputFileSync("test_ts_stdout.log", test_ts_stdout, "utf-8");
             return 0;
@@ -218,7 +229,7 @@ async function finalRuns() {
 
     const { stdout: start_stdout } = await shelljs.exec("npm run start");
     function check_start_stdout() {
-        if (!start_stdout.trim().includes(`ytslib_policy package '${name}' started successfully!`)) {
+        if (!start_stdout.trim().includes(`ytslib_policy package '${packageName}' started successfully!`)) {
             console.error(`    STEP npm run start - didn't output correctly`);
             // outputFileSync("start_stdout.log", start_stdout, "utf-8");
             return 0;
